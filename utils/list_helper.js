@@ -7,7 +7,7 @@ const totalLikes = (blogs) => {
 };
 
 const favoriteBlog = (blogs) => {
-  if (blogs.length === 0) return null;
+  if (blogs.length === 0) return 0;
 
   return blogs.reduce(
     (fav, blog) =>
