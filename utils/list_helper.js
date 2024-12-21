@@ -19,7 +19,7 @@ const favoriteBlog = (blogs) => {
       highest = blog.likes;
     }
   });
-  return fav;
+  return { ...fav };
 };
 
 module.exports = { dummy, totalLikes, favoriteBlog };
