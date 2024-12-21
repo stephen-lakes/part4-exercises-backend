@@ -56,7 +56,7 @@ test("of favorite blog is calcualted right", () => {
 
   const result = listHelper.favoriteBlog(blogs);
 
-  assert.strictEqual(result, {
+  assert.deepEqual(result, {
     title: "Canonical string reduction",
     author: "Edsger W. Dijkstra",
     likes: 12,
