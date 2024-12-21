@@ -11,7 +11,10 @@ const favoriteBlog = (blogs) => {
   let highest = 0;
   blogs.forEach((blog) => {
     if (blog.likes > highest) {
-      fav = { title: blog.title, author: blog.author, likes: blog.likes };
+      fav = blog;
+      delete fav._id;
+      delete fav.url;
+      delete fav.__v;
 
       highest = blog.likes;
     }
