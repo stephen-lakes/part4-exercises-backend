@@ -15,7 +15,7 @@ test("reverse of react", () => {
   assert.strictEqual(result, "tcaer");
 });
 
-test("revers of saippuakauppias", () => {
+test("reverse of saippuakauppias", () => {
   const result = reverse("saippuakauppias");
 
   assert.strictEqual(result, "saippuakauppias");
