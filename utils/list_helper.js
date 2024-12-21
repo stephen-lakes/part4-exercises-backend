@@ -7,19 +7,15 @@ const totalLikes = (blogs) => {
 };
 
 const favoriteBlog = (blogs) => {
-  let fav;
-  let highest = 0;
-  blogs.forEach((blog) => {
-    if (blog.likes > highest) {
-      fav = blog;
-      delete fav._id;
-      delete fav.url;
-      delete fav.__v;
+  if (blogs.length === 0) return null;
 
-      highest = blog.likes;
-    }
-  });
-  return { ...fav };
+  return blogs.reduce(
+    (fav, blog) =>
+      blog.likes > (fav?.likes || 0)
+        ? { title: blog.title, author: blog.author, likes: blog.likes }
+        : fav,
+    null
+  );
 };
 
 module.exports = { dummy, totalLikes, favoriteBlog };
