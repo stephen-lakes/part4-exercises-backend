@@ -21,7 +21,20 @@ const favoriteBlog = (blogs) => {
 const mostBlogs = (blogs) => {
   if (blogs.length === 0) return 0;
 
-  return;
+  let authorBlogCount = {};
+  blogs.forEach((blog) => {
+    if (authorBlogCount[blog.author]) {
+      authorBlogCount[blog.author].count += 1;
+    } else {
+      authorBlogCount[blog.author] = { count: 1 };
+    }
+  });
+
+  let topAuthor = Object.keys(authorBlogCount).reduce((acc, b) =>
+    authorBlogCount[acc] > authorBlogCount[b] ? acc : b
+  );
+
+  return { author: topAuthor, blogs: authorBlogCount[topAuthor].count };
 };
 
 const mostLikes = () => {};
