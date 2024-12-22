@@ -7,10 +7,10 @@ blogsRouter.get("/", (request, response) => {
   });
 });
 
-blogsRouter.post("/post", (request, response) => {
-  const blog = new Blog(request.body);
+blogsRouter.post("/", (request, response) => {
+  const newBlog = new Blog(request.body);
 
-  blog.save().then((result) => response.status(201).json(result));
+  newBlog.save().then((result) => response.status(201).json(result));
 });
 
 blogsRouter.get("/:id", (request, response, next) => {
