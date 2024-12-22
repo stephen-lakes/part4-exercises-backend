@@ -18,4 +18,10 @@ const favoriteBlog = (blogs) => {
   );
 };
 
-module.exports = { dummy, totalLikes, favoriteBlog };
+const mostBlogs = (blogs) => {
+  if (blogs.length === 0) return 0;
+
+  return;
+};
+
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs };
