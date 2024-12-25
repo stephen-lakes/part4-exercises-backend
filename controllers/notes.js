@@ -1,6 +1,6 @@
 const notesRouter = require("express").Router();
 const Note = require("../models/note");
-const { info, error } = require("../utils/logger");
+const logger = require("../utils/logger");
 
 notesRouter.get("/", async (request, response) => {
   const notes = await Note.find({});
@@ -12,7 +12,7 @@ notesRouter.get("/", async (request, response, next) => {
     const notes = await Note.find({});
     response.json(notes);
   } catch (error) {
-    error("Error fetching notes:", error.message);
+    logger.error("Error fetching notes:", error.message);
     next(error);
   }
 });
