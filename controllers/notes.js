@@ -51,19 +51,22 @@ notesRouter.delete("/:id", async (request, response, next) => {
   }
 });
 
-notesRouter.put("/:id", (request, response, next) => {
+notesRouter.put("/:id", async (request, response, next) => {
   const body = request.body;
-
   const note = {
     content: body.content,
     important: body.important,
   };
 
-  Note.findByIdAndUpdate(request.params.id, note, { new: true })
-    .then((updatedNote) => {
-      response.json(updatedNote);
-    })
-    .catch((error) => next(error));
+  try {
+    const updatedNote = await Note.findByIdAndUpdate(request.params.id, note, {
+      new: true,
+    });
+    response.json(updatedNote);
+  } catch (error) {
+    logger.error("Error updating note", error.message);
+    next(error);
+  }
 });
 
 module.exports = notesRouter;
