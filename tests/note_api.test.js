@@ -65,6 +65,16 @@ test("note without content is not added", async () => {
   assert.strictEqual(notesAtEnd.length, helper.initialNotes.length);
 });
 
+test("a specific note can be viewed", async () => {
+  const notesAtStart = helper.notesInDb();
+  const noteToView = notesAtStart[0];
+
+  const resultNote = await api
+    .get(`/api/notes/${noteToView.id}`)
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
