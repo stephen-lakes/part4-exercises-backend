@@ -21,7 +21,7 @@ notesRouter.get("/:id", async (request, response, next) => {
       response.status(404).end();
     }
   } catch (error) {
-    logger.error("Error fetching notes:", error.message);
+    logger.error("Error fetching note:", error.message);
     next(error);
   }
 });
