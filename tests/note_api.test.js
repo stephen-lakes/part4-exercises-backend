@@ -12,13 +12,16 @@ beforeEach(async () => {
   await Note.deleteMany({});
   console.log("cleared");
 
-  initialNotes.forEach(async (note) => {
+  helper.initialNotes.forEach(async (note) => {
     let noteObject = new Note(note);
     await noteObject.save();
+    console.log("saved");
   });
+  console.log("done");
 });
 
 test.only("notes are returned as json", async () => {
+  console.log("test entered");
   await api
     .get("/api/notes")
     .expect(200)
