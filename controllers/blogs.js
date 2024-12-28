@@ -13,10 +13,16 @@ blogsRouter.get("/", async (request, response, next) => {
 });
 
 blogsRouter.post("/", async (request, response, next) => {
+  const { title, author, url, likes } = request.body;
+  if (!title || !url)
+    return response.status(400).json({ error: "Bad Request" });
+
   try {
     const newBlog = new Blog({
-      ...request.body,
-      likes: request.body.likes || 0,
+      title,
+      author,
+      url,
+      likes: likes || 0,
     });
     const savedBlog = await newBlog.save();
     response.status(201).json(savedBlog);
