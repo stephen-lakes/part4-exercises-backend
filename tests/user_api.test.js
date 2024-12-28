@@ -62,6 +62,27 @@ describe("when there is initially one user in db", () => {
     assert.strictEqual(usersAtStart.length, usersAtEnd.length);
   });
 
+  test("fails with status 400 if username is too short with suitable error message", async () => {
+    const newUser = {
+      username: "us",
+      name: "Short Username",
+      password: "validpassword",
+    };
+
+    const response = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    assert.strictEqual(
+      response.body.error,
+      "Username must be at least 3 characters long"
+    );
+  });
+
+  test("fails with status 400 if password is too short", async () => {});
+
   after(() => {
     mongoose.connection.close();
   });
