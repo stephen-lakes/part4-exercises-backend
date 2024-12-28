@@ -128,7 +128,7 @@ test("an existing blog can be deleted", async () => {
 
   const blogsAtEnd = await blogsInDb();
   const deletedBlog = blogsAtEnd.find((blog) => blog.id === blogToDelete.id);
-  assert.strictEqual(blogsAtEnd, blogsAtStart - 1);
+  assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1);
   assert.strictEqual(deletedBlog, undefined);
 });
 
