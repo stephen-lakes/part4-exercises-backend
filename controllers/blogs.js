@@ -12,10 +12,15 @@ blogsRouter.get("/", async (request, response, next) => {
   }
 });
 
-blogsRouter.post("/", (request, response) => {
-  const newBlog = new Blog(request.body);
-
-  newBlog.save().then((result) => response.status(201).json(result));
+blogsRouter.post("/", async (request, response, next) => {
+  try {
+    const newBlog = new Blog(request.body);
+    const savedBlog = await newBlog.save();
+    response.status(201).json(savedBlog);
+  } catch (error) {
+    logger.error("Error adding blog", error);
+    next(error);
+  }
 });
 
 blogsRouter.get("/:id", (request, response, next) => {
