@@ -101,6 +101,25 @@ test("missing likes property defaults to 0", async () => {
   assert.strictEqual(response.body.likes, 0);
 });
 
+test("blog without title is not added", async () => {
+  const newBlog = {
+    author: "Md. Fahim Bin Amin",
+    url: "https://www.freecodecamp.org/news/how-to-backup-hashnode-articles-to-github/",
+    likes: 1000,
+  };
+
+  const response = await api.post("/api/blogs").send(newBlog).expect(400);
+});
+
+test("blog without url is not added", async () => {
+  const newBlog = {
+    title: "How to Backup Your Hashnode Articles to GitHub",
+    author: "Md. Fahim Bin Amin",
+    likes: 1000,
+  };
+  const response = await api.post("/api/blogs").send(newBlog).expect(400);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
