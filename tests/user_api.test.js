@@ -81,7 +81,23 @@ describe("when there is initially one user in db", () => {
     );
   });
 
-  test("fails with status 400 if password is too short", async () => {});
+  test("fails with status 400 if password is too short", async () => {
+    const newUser = {
+      username: "validuser",
+      name: "Valid User",
+      password: "12",
+    };
+
+    const response = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    assert(
+      response.body.error.includes("Password must be atleast 3 characters")
+    );
+  });
 
   after(() => {
     mongoose.connection.close();
