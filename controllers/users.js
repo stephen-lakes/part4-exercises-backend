@@ -6,7 +6,10 @@ const User = require("../models/user");
 
 usersRouter.get("/", async (request, response, next) => {
   try {
-    const users = await User.find({}).populate("notes", {content: 1, important: 1});
+    const users = await User.find({}).populate("notes", {
+      content: 1,
+      important: 1,
+    });
     response.status(200).json(users);
   } catch (error) {
     logger.error("Error fetching users", error);
@@ -16,6 +19,11 @@ usersRouter.get("/", async (request, response, next) => {
 
 usersRouter.post("/", async (request, response, next) => {
   const { username, name, password } = request.body;
+  if (password.length < 3)
+    return response
+      .status(400)
+      .json({ error: "Password must be atleast 3 characters" });
+      
   const saltRound = 10;
   const passwordHash = await bcrypt.hash(password, saltRound);
 
