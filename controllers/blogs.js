@@ -56,7 +56,7 @@ blogsRouter.get("/:id", async (request, response, next) => {
   }
 });
 
-blogsRouter.delete("/:id", userExtractor, async (request, response, next) => {
+blogsRouter.delete("/:id", async (request, response, next) => {
   const blogId = request.params.id;
   const blog = await Blog.findById(blogId);
 
