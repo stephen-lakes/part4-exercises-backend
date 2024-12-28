@@ -6,7 +6,7 @@ const User = require("../models/user");
 
 usersRouter.get("/", async (request, response, next) => {
   try {
-    const users = await User.find({}).populate("notes");
+    const users = await User.find({}).populate("notes", {content: 1, important: 1});
     response.status(200).json(users);
   } catch (error) {
     logger.error("Error fetching users", error);
