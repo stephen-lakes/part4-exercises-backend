@@ -2,6 +2,7 @@ const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
 const logger = require("../utils/logger");
+const { tokenExtractor, userExtractor } = require("../utils/middleware");
 
 blogsRouter.get("/", async (request, response, next) => {
   try {
@@ -17,33 +18,38 @@ blogsRouter.get("/", async (request, response, next) => {
   }
 });
 
-blogsRouter.post("/", async (request, response, next) => {
-  const { title, author, url, likes, userId } = request.body;
-  if (!title || !url)
-    return response.status(400).json({ error: "Bad Request" });
+blogsRouter.post(
+  "/",
+  tokenExtractor,
+  userExtractor,
+  async (request, response, next) => {
+    const { title, author, url, likes, userId } = request.body;
+    if (!title || !url)
+      return response.status(400).json({ error: "Bad Request" });
 
-  try {
-    const user = await User.findById(userId);
-    if (!user) return response.status(404).json({ error: "User not found" });
+    try {
+      const user = await User.findById(userId);
+      if (!user) return response.status(404).json({ error: "User not found" });
 
-    const newBlog = new Blog({
-      title,
-      author,
-      url,
-      likes: likes || 0,
-      user: user._id,
-    });
-    const savedBlog = await newBlog.save();
+      const newBlog = new Blog({
+        title,
+        author,
+        url,
+        likes: likes || 0,
+        user: user._id,
+      });
+      const savedBlog = await newBlog.save();
 
-    user.blogs = user.blogs.concat(newBlog._id);
-    await user.save();
+      user.blogs = user.blogs.concat(newBlog._id);
+      await user.save();
 
-    response.status(201).json(savedBlog);
-  } catch (error) {
-    logger.error("Error adding blog", error);
-    next(error);
+      response.status(201).json(savedBlog);
+    } catch (error) {
+      logger.error("Error adding blog", error);
+      next(error);
+    }
   }
-});
+);
 
 blogsRouter.get("/:id", async (request, response, next) => {
   try {
