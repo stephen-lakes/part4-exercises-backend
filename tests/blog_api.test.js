@@ -1,4 +1,5 @@
 const { test, beforeEach, after } = require("node:test");
+const assert = require("node:assert");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
 
@@ -33,7 +34,12 @@ beforeEach(async () => {
   }
 });
 
-test("the correct amount of blog posts are returned in the JSON format", async () => {});
+test("the correct amount of blog posts as JSON format", async () => {
+  await api
+    .get("/api/blogs")
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
+});
 
 after(async () => {
   await mongoose.connection.close();
