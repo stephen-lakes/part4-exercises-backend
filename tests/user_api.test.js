@@ -2,16 +2,13 @@ const { beforeEach, after, describe, test } = require("node:test");
 const assert = require("assert");
 const supertest = require("supertest");
 const bcrypt = require("bcrypt");
+const mongoose = require("mongoose");
 
 const app = require("../app");
 const User = require("../models/user");
-const mongoose = require("mongoose");
+const helper = require("./test_helper");
 
 const api = supertest(app);
-
-const usersInDb = async () => {
-  return await User.find({});
-};
 
 describe("when there is initially one user in db", () => {
   beforeEach(async () => {
@@ -24,7 +21,7 @@ describe("when there is initially one user in db", () => {
   });
 
   test("Creation suceeds with a fresh username", async () => {
-    const usersAtStart = await usersInDb();
+    const usersAtStart = await helper.usersInDb();
 
     const newUser = {
       username: "mluukkai",
@@ -38,11 +35,11 @@ describe("when there is initially one user in db", () => {
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
-    const usersAtEnd = await usersInDb();
+    const usersAtEnd = await helper.usersInDb();
     assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1);
 
-    const usernames = usersAtEnd.map(u => u.username)
-    assert(usernames.includes(newUser.username))
+    const usernames = usersAtEnd.map((u) => u.username);
+    assert(usernames.includes(newUser.username));
   });
 
   after(() => {
