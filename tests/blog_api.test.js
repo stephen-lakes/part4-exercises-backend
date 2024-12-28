@@ -35,10 +35,12 @@ beforeEach(async () => {
 });
 
 test("the correct amount of blog posts as JSON format", async () => {
-  await api
+  const response = await api
     .get("/api/blogs")
     .expect(200)
     .expect("Content-Type", /application\/json/);
+
+  assert.strictEqual(response.body.length, initialBlogs.length);
 });
 
 after(async () => {
