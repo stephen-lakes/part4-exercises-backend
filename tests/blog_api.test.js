@@ -132,7 +132,33 @@ test("an existing blog can be deleted", async () => {
   assert.strictEqual(deletedBlog, undefined);
 });
 
+test("an existing blog can be updated", async () => {
+  const blogsAtStart = await blogsInDb();
+  const blogToUpdate = blogsAtStart[0];
+  const updatedData = {
+    ...blogToUpdate,
+    title: blogToUpdate.title + "UPDATED",
+  };
 
+  const response = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(updatedData)
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
+
+  assert.strictEqual(response.body.title, updatedData.title);
+  assert.strictEqual(response.body.author, updatedData.author);
+  assert.strictEqual(response.body.url, updatedData.url);
+  assert.strictEqual(response.body.likes, updatedData.likes);
+
+  const blogsAtEnd = await blogsInDb();
+  const updatedBlog = blogsAtEnd.find((blog) => blog.id === blogToUpdate.id);
+
+  assert.strictEqual(updatedBlog.title, updatedData.title);
+  assert.strictEqual(updatedBlog.author, updatedData.author);
+  assert.strictEqual(updatedBlog.url, updatedData.url);
+  assert.strictEqual(updatedBlog.likes, updatedData.likes);
+});
 
 after(async () => {
   await mongoose.connection.close();
