@@ -13,6 +13,7 @@ usersRouter.get("/", async (request, response, next) => {
       })
       .populate("blogs", {
         title: 1,
+        author: 1,
         url: 1,
         likes: 1,
       });
