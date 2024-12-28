@@ -18,38 +18,33 @@ blogsRouter.get("/", async (request, response, next) => {
   }
 });
 
-blogsRouter.post(
-  "/",
-  tokenExtractor,
-  userExtractor,
-  async (request, response, next) => {
-    const { title, author, url, likes, userId } = request.body;
-    if (!title || !url)
-      return response.status(400).json({ error: "Bad Request" });
+blogsRouter.post("/", userExtractor, async (request, response, next) => {
+  const { title, author, url, likes, userId } = request.body;
+  if (!title || !url)
+    return response.status(400).json({ error: "Bad Request" });
 
-    try {
-      const user = await User.findById(userId);
-      if (!user) return response.status(404).json({ error: "User not found" });
+  try {
+    const user = await User.findById(userId);
+    if (!user) return response.status(404).json({ error: "User not found" });
 
-      const newBlog = new Blog({
-        title,
-        author,
-        url,
-        likes: likes || 0,
-        user: user._id,
-      });
-      const savedBlog = await newBlog.save();
+    const newBlog = new Blog({
+      title,
+      author,
+      url,
+      likes: likes || 0,
+      user: user._id,
+    });
+    const savedBlog = await newBlog.save();
 
-      user.blogs = user.blogs.concat(newBlog._id);
-      await user.save();
+    user.blogs = user.blogs.concat(newBlog._id);
+    await user.save();
 
-      response.status(201).json(savedBlog);
-    } catch (error) {
-      logger.error("Error adding blog", error);
-      next(error);
-    }
+    response.status(201).json(savedBlog);
+  } catch (error) {
+    logger.error("Error adding blog", error);
+    next(error);
   }
-);
+});
 
 blogsRouter.get("/:id", async (request, response, next) => {
   try {
@@ -61,9 +56,19 @@ blogsRouter.get("/:id", async (request, response, next) => {
   }
 });
 
-blogsRouter.delete("/:id", async (request, response, next) => {
+blogsRouter.delete("/:id", userExtractor, async (request, response, next) => {
+  const blogId = request.params.id;
+  const blog = await Blog.findById(blogId);
+
+  if (!blog) return response.status(404).json({ error: "Blog not found" });
+
+  if (blog.user.toString() !== request.user._id.toString())
+    return response
+      .status(403)
+      .json({ error: "You dont have permission to delete this blog" });
+
   try {
-    await Blog.findByIdAndDelete(request.params.id);
+    await Blog.findByIdAndDelete(blogId);
     response.status(204).end();
   } catch (error) {
     logger.error("Error deleting blog", error);
