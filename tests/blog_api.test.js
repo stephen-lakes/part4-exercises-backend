@@ -120,6 +120,20 @@ test("blog without url is not added", async () => {
   const response = await api.post("/api/blogs").send(newBlog).expect(400);
 });
 
+test("an existing blog can be deleted", async () => {
+  const blogsAtStart = await blogsInDb();
+  const blogToDelete = blogsAtStart[0];
+
+  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+
+  const blogsAtEnd = await blogsInDb();
+  const deletedBlog = blogsAtEnd.find((blog) => blog.id === blogToDelete.id);
+  assert.strictEqual(blogsAtEnd, blogsAtStart - 1);
+  assert.strictEqual(deletedBlog, undefined);
+});
+
+
+
 after(async () => {
   await mongoose.connection.close();
 });
