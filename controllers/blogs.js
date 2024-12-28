@@ -5,7 +5,11 @@ const logger = require("../utils/logger");
 
 blogsRouter.get("/", async (request, response, next) => {
   try {
-    const blogs = await Blog.find({});
+    const blogs = await Blog.find({}).populate("user", {
+      username: 1,
+      name: 1,
+      id: 1,
+    });
     response.status(200).json(blogs);
   } catch (error) {
     logger.error("Error fetching blogs", error);
