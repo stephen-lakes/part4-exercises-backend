@@ -43,6 +43,18 @@ test("the correct amount of blog posts as JSON format", async () => {
   assert.strictEqual(response.body.length, initialBlogs.length);
 });
 
+test("blog posts have id property instead of _id", async () => {
+  const response = await api
+    .get("/api/blogs")
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
+
+  const blog = response.body[0];
+
+  assert(blog.id, !undefined);
+  assert.strictEqual(blog._id, undefined);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
