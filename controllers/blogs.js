@@ -91,9 +91,19 @@ blogsRouter.put(
   tokenExtractor,
   userExtractor,
   async (request, response, next) => {
+    const blogId = request.params.id;
+    const blog = await Blog.findById(blogId);
+
+    if (!blog) return response.status(404).json({ error: "Blog not found" });
+
+    if ((await blog.user.toString()) !== request.user._id.toString())
+      return response
+        .status(403)
+        .json({ error: "You dont have permission to update this blog" });
+
     try {
       const updatedBlog = await Blog.findByIdAndUpdate(
-        request.params.id,
+        blogId,
         request.body,
         { new: true }
       );
