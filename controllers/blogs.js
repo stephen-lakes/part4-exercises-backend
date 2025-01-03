@@ -2,7 +2,6 @@ const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
 const logger = require("../utils/logger");
-const { tokenExtractor, userExtractor } = require("../utils/middleware");
 
 blogsRouter.get("/", async (request, response, next) => {
   try {
@@ -18,7 +17,7 @@ blogsRouter.get("/", async (request, response, next) => {
   }
 });
 
-blogsRouter.post("/", userExtractor, async (request, response, next) => {
+blogsRouter.post("/", async (request, response, next) => {
   const { title, author, url, likes, userId } = request.body;
   if (!title || !url)
     return response.status(400).json({ error: "Bad Request" });
@@ -62,7 +61,7 @@ blogsRouter.delete("/:id", async (request, response, next) => {
 
   if (!blog) return response.status(404).json({ error: "Blog not found" });
 
-  if (blog.user.toString() !== request.user._id.toString())
+  if ((await blog.user.toString()) !== request.user._id.toString())
     return response
       .status(403)
       .json({ error: "You dont have permission to delete this blog" });
