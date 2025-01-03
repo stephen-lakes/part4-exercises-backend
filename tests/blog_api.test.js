@@ -1,8 +1,8 @@
+require("dotenv").config();
 const { test, beforeEach, after } = require("node:test");
 const assert = require("node:assert");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
-require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
 const app = require("../app");
