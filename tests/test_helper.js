@@ -30,9 +30,12 @@ const usersInDb = async () => {
   return users.map((user) => user.toJSON());
 };
 
+const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlN0ZXBoZW5PbHV5b21pIiwiaWQiOiI2NzZmYjZmYzRlNjI2ZjVmZTUzMTRhNTAiLCJpYXQiOjE3MzU3MzQyNDgsImV4cCI6MTczNTgyMDY0OH0.McsEqW3icblcYaQ5vVcrddNgd9p2Flec0fomYDAc78I`;
+
 module.exports = {
   initialNotes,
   nonExistingId,
   notesInDb,
   usersInDb,
+  token,
 };
