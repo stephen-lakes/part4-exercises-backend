@@ -5,16 +5,26 @@ const supertest = require("supertest");
 
 const app = require("../app");
 const Blog = require("../models/blog");
+const helper = require("./test_helper");
 
 const api = supertest(app);
 
 const initialBlogs = [
   {
-    title: "Introduction to ExpressJS API",
-    author: "Stephen Oluyomi",
+    title: "Sample Title",
+    author: "Sample Author",
     url: "https://www.stephen-dev.com/blogs/express-api",
     likes: 10000,
     id: "676d9cb624adfda4dbbe696f",
+    user: "676fb6fc4e626f5fe5314a50",
+  },
+  {
+    title: "Introduction to ExpressJS API",
+    author: "Stephen Oluyomi",
+    url: "Sample link",
+    likes: 9000,
+    id: "677538f92a68efc13e7ac6b5",
+    user: "676fb6fc4e626f5fe5314a50",
   },
   {
     title: "How to Build a Blog with the Ghost API and Next.js",
@@ -22,6 +32,15 @@ const initialBlogs = [
     url: "https://www.freecodecamp.org/news/build-a-blog-website-with-ghost-api-and-nextjs/",
     likes: 8500,
     id: "676d9d1f24adfda4dbbe6972",
+    user: "6777b553ef3e57ef61154ccb",
+  },
+  {
+    title: "How to Build a Blog with the Ghost API and Next.js",
+    author: "sample Author II",
+    url: "Sample url",
+    likes: 800,
+    id: "6775360e1167c2d4b6559b33",
+    user: "676fb6fc4e626f5fe5314a50",
   },
 ];
 
@@ -33,6 +52,7 @@ const blogsInDb = async () => {
 beforeEach(async () => {
   await Blog.deleteMany({});
 
+
   for (let blog of initialBlogs) {
     let blogObject = new Blog(blog);
     blogObject.save();
@@ -42,6 +62,7 @@ beforeEach(async () => {
 test("the correct amount of blog posts as JSON format", async () => {
   const response = await api
     .get("/api/blogs")
+    .set("Authorization", `Bearer ${helper.token}`)
     .expect(200)
     .expect("Content-Type", /application\/json/);
 
@@ -51,6 +72,7 @@ test("the correct amount of blog posts as JSON format", async () => {
 test("blog posts have id property instead of _id", async () => {
   const response = await api
     .get("/api/blogs")
+    .set("Authorization", `Bearer ${helper.token}`)
     .expect(200)
     .expect("Content-Type", /application\/json/);
 
@@ -64,13 +86,15 @@ test("a valid blog can be added", async () => {
   const blogsAtStart = await blogsInDb();
   const newBlog = {
     title: "How to Backup Your Hashnode Articles to GitHub",
-    author: "Md. Fahim Bin Amin",
+    author: "Stephen Oluyomi",
     url: "https://www.freecodecamp.org/news/how-to-backup-hashnode-articles-to-github/",
     likes: 1500,
+    userId: "676fb6fc4e626f5fe5314a50"
   };
 
   const response = await api
     .post("/api/blogs")
+    .set("Authorization", `Bearer ${helper.token}`)
     .send(newBlog)
     .expect(201)
     .expect("Content-Type", /application\/json/);
@@ -90,10 +114,13 @@ test("missing likes property defaults to 0", async () => {
     title: "How to Backup Your Hashnode Articles to GitHub",
     author: "Md. Fahim Bin Amin",
     url: "https://www.freecodecamp.org/news/how-to-backup-hashnode-articles-to-github/",
+    userId: "676fb6fc4e626f5fe5314a50"
+
   };
 
   const response = await api
     .post("/api/blogs")
+    .set("Authorization", `Bearer ${helper.token}`)
     .send(newBlog)
     .expect(201)
     .expect("Content-Type", /application\/json/);
@@ -106,9 +133,13 @@ test("blog without title is not added", async () => {
     author: "Md. Fahim Bin Amin",
     url: "https://www.freecodecamp.org/news/how-to-backup-hashnode-articles-to-github/",
     likes: 1000,
+    userId: "676ff8136a46df7a2ab3650c"
   };
 
-  const response = await api.post("/api/blogs").send(newBlog).expect(400);
+  const response = await api
+    .post("/api/blogs")
+    .set("Authorization", `Bearer ${helper.token}`)
+    .send(newBlog).expect(400);
 });
 
 test("blog without url is not added", async () => {
@@ -117,14 +148,21 @@ test("blog without url is not added", async () => {
     author: "Md. Fahim Bin Amin",
     likes: 1000,
   };
-  const response = await api.post("/api/blogs").send(newBlog).expect(400);
+  const response = await api
+    .post("/api/blogs")
+    .set("Authorization", `Bearer ${helper.token}`)
+    .send(newBlog)
+    .expect(400);
 });
 
 test("an existing blog can be deleted", async () => {
   const blogsAtStart = await blogsInDb();
   const blogToDelete = blogsAtStart[0];
 
-  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .set("Authorization", `Bearer ${helper.token}`)
+    .expect(204);
 
   const blogsAtEnd = await blogsInDb();
   const deletedBlog = blogsAtEnd.find((blog) => blog.id === blogToDelete.id);
@@ -142,6 +180,7 @@ test("an existing blog can be updated", async () => {
 
   const response = await api
     .put(`/api/blogs/${blogToUpdate.id}`)
+    .set("Authorization", `Bearer ${helper.token}`)
     .send(updatedData)
     .expect(200)
     .expect("Content-Type", /application\/json/);
