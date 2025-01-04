@@ -12,7 +12,7 @@ loginRouter.post("/", async (request, response) => {
   const user = await User.findOne({ username });
 
   if (!user) {
-    return response.status(401).json({ error: "username not found" });
+    return response.status(404).json({ error: "username not found" });
   }
 
   // Compare password
