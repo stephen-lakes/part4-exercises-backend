@@ -5,33 +5,24 @@ require("dotenv").config();
 
 const User = require("../models/user");
 
-const getTokenFrom = (request) => {
-  const authorization = request.get("authorization");
-  if (authorization && authorization.startsWith("Bearer "))
-    return authorization.replace("Bearer ", "");
-
-  return null;
-};
-
 loginRouter.post("/", async (request, response) => {
   const { username, password } = request.body;
 
-  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET);
-  if (!decodedToken.id)
-    return response.status(401).json({ error: "token invalid" });
+  // Find user by username
+  const user = await User.findOne({ username });
+  
+  if (!user) {
+    return response.status(401).json({ error: "invalid username or password" });
+  }
 
-  const user = await User.findById(decodedToken.id);
+  // Compare password
+  const passwordCorrect = await bcrypt.compare(password, user.passwordHash);
+  
+  if (!passwordCorrect) {
+    return response.status(401).json({ error: "invalid username or password" });
+  }
 
-  // const user = await User.findOne({ username });
-
-  const passwordCorrect =
-    user === null ? false : await bcrypt.compare(password, user.passwordHash);
-
-  if (!(user && passwordCorrect))
-    return response.status(401).json({
-      error: "invalid username or password",
-    });
-
+  // Generate token
   const userForToken = {
     username: user.username,
     id: user._id,
@@ -41,9 +32,11 @@ loginRouter.post("/", async (request, response) => {
     expiresIn: "24h",
   });
 
-  response
-    .status(200)
-    .send({ token, username: user.username, name: user.name });
+  response.status(200).send({
+    token,
+    username: user.username,
+    name: user.name,
+  });
 });
 
 module.exports = loginRouter;
