@@ -28,7 +28,6 @@ GET http://localhost:3003/api/blogs
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
-
 ### Add Blog
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
@@ -42,17 +41,34 @@ Authorization: Bearer {{token}}
 "userId": "676fb6fc4e626f5fe5314a50"
 }
 
+### Get Blog
+GET http://localhost:3003/api/blogs/67702f3a8f1888d7cfb3666e
+Content-Type: : application/json
+Authorization: Bearer {{token}}
+
+
 
 ### Delete a blog
-DELETE http://localhost:3003/api/blogs/6777c13a433d87c209e1d588
+DELETE http://localhost:3003/api/blogs/6775360e1167c2d4b6559b33
 Content-Type: application/json
 Authorization: Bearer {{token}}
+
+### Update a blog
+PUT http://localhost:3003/api/blogs/67702f3a8f1888d7cfb3666e
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "title": "My Contact Page",
+    "author": "Stephen Oluyomi",
+    "url": "https://stephen-dev-frontend.onrender.com/contact",
+    "likes": 1202
+}
 
 
 ### Login
 POST http://localhost:3003/api/login
 Content-Type: application/json
-Authorization: Bearer {{token}}
 
 
 {
